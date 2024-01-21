@@ -3,6 +3,12 @@ using UnityEngine;
 
 public delegate void TweenCallback();
 
+//TODO : Add Delay
+//TODO : Add Easing
+//TODO : Add custom inspector
+//TODO : Check performance on event and action callbacks
+//TODO : Start, current, end should be generic to account for multiple different types of data to lerp
+//TODO : Add other functionalities as required
 public class KlazTween
 {
     public float CurrentValue { get; private set; }
