@@ -3,6 +3,7 @@ using UnityEngine;
 
 public delegate void TweenCallback();
 
+//TODO : Try to find a way to create a generic job system
 //TODO : Use Job system should not be enabled if burst compile package is not installed
 //TODO : BurstCompile function attribute should not be enabled if burst compile package is not installed
 //TODO : Add Delay
