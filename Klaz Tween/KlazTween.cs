@@ -13,6 +13,7 @@ public delegate void TweenCallback();
 //TODO : Check performance on event and action callbacks
 //TODO : Start, current, end should be generic to account for multiple different types of data to lerp
 //TODO : Add other functionalities as required
+//TODO : Add namespace
 public class KlazTween
 {
     public float CurrentValue { get; private set; }
