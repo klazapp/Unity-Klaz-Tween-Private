@@ -3,6 +3,7 @@ using UnityEngine;
 
 public delegate void TweenCallback();
 
+//TODO : Manager should be a singleton
 //TODO : All current values should be clamped from start to end, particularly job system values
 //TODO : Try to find a way to create a generic job system
 //TODO : Use Job system should not be enabled if burst compile package is not installed
