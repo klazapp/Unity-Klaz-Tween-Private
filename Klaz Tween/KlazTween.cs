@@ -3,9 +3,11 @@ using UnityEngine;
 
 public delegate void TweenCallback();
 
+//TODO : Use Job system should not be enabled if burst compile package is not installed
+//TODO : BurstCompile function attribute should not be enabled if burst compile package is not installed
 //TODO : Add Delay
 //TODO : Add Easing
-//TODO : Add custom inspector
+//TODO : Create custom inspector
 //TODO : Check performance on event and action callbacks
 //TODO : Start, current, end should be generic to account for multiple different types of data to lerp
 //TODO : Add other functionalities as required
