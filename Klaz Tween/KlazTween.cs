@@ -3,6 +3,7 @@ using UnityEngine;
 
 public delegate void TweenCallback();
 
+//TODO : Jobsystem scheduling and complete shouldnt occur one after another
 //TODO : UseJobSystem should be a private variable
 //TODO : Manager should be a singleton
 //TODO : All current values should be clamped from start to end, particularly job system values
