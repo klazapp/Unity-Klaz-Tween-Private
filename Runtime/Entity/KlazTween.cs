@@ -11,19 +11,19 @@ namespace com.Klazapp.Utility
         private KlazTweenBaseComponent<T> klazTweenBaseComponent;
         private KlazTweenBehaviourComponent<T> klazTweenBehaviourComponent;
         
-        public int Id { get; set; }
-
         public bool IsDelayCompleted { get; set; }
         public bool IsStarted { get; set; }
         public bool IsCompleted { get; set; }
         #endregion
 
-        #region Lifecycle Flow
-        public KlazTween(T startValue, T endValue, float duration, Action<T> onUpdate, Func<T, T, float, T> lerpFunc, float delay = 0, KlazTweenCallback onStart = null, KlazTweenCallback onComplete = null, int id = 0)
+        public int GetId()
         {
-            Id = id;
-            
-            klazTweenBaseComponent = new KlazTweenBaseComponent<T>(startValue, startValue, endValue, duration, Time.time, delay);
+            return klazTweenBaseComponent.GetId();
+        }
+        #region Lifecycle Flow
+        public KlazTween(int id, T startValue, T endValue, float duration, Action<T> onUpdate, Func<T, T, float, T> lerpFunc, float delay = 0, EaseType easeType = EaseType.Linear, KlazTweenCallback onStart = null, KlazTweenCallback onComplete = null)
+        {
+            klazTweenBaseComponent = new KlazTweenBaseComponent<T>(id, startValue, startValue, endValue, duration, Time.time, delay, easeType);
 
             klazTweenBehaviourComponent = new KlazTweenBehaviourComponent<T>();
             klazTweenBehaviourComponent.SetKlazTweenBehaviourComponent(onUpdate, lerpFunc, onStart, onComplete);
@@ -66,23 +66,26 @@ namespace com.Klazapp.Utility
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ApplyRegularUpdate()
         {
-            var (_, startValue, endValue, duration, startTime, __) = klazTweenBaseComponent.GetKlazTweenBaseComponents();
+            var (id, _, startValue, endValue, duration, startTime, __, easeType) = klazTweenBaseComponent.GetKlazTweenBaseComponents();
 
             var currentTime = Time.time;
             var normalizedTime = math.clamp((currentTime - startTime) / duration, 0f, 1f);
 
-            if (normalizedTime >= 1.0f)
+            // Retrieve the ease type and apply easing function
+            var easedTime = Easing.SetEasingByEaseType(easeType, normalizedTime);
+
+            if (easedTime >= 1.0f)
             {
                 InvokeComplete();
             }
 
             var lerpFunc = klazTweenBehaviourComponent.GetLerpFunc();
-            var currentValue = lerpFunc(startValue, endValue, normalizedTime);
+            var currentValue = lerpFunc(startValue, endValue, easedTime);
 
             var onUpdate = klazTweenBehaviourComponent.GetOnUpdate();
             onUpdate?.Invoke(currentValue);
             
-            klazTweenBaseComponent.SetKlazTweenBaseComponents((currentValue, startValue, endValue, duration, startTime, __));
+            klazTweenBaseComponent.SetKlazTweenBaseComponents((id, currentValue, startValue, endValue, duration, startTime, __, easeType));
         }
         
         public void ApplyJobUpdate()
@@ -111,7 +114,6 @@ namespace com.Klazapp.Utility
             if (IsCompleted)
                 return;
 
-            Debug.Log("tween id = " + Id + ", cinmpelted");
             var onComplete = klazTweenBehaviourComponent.GetOnComplete();
             onComplete?.Invoke();
             IsCompleted = true;
@@ -119,15 +121,15 @@ namespace com.Klazapp.Utility
         #endregion
 
         #region IKlazTweenJob
-        public (T currentValue, T startValue, T endValue, float duration, float startTime, bool isCompleted, float delay) PrepareForJob()
+        public (int id, T currentValue, T startValue, T endValue, float duration, float startTime, bool isCompleted, float delay, EaseType easeType) PrepareForJob()
         {
-            var (currentValue, startValue, endValue, duration, startTime, delay) = klazTweenBaseComponent.GetKlazTweenBaseComponents();
-            return (currentValue, startValue, endValue, duration, startTime, IsCompleted, delay);
+            var (id, currentValue, startValue, endValue, duration, startTime, delay, easeType) = klazTweenBaseComponent.GetKlazTweenBaseComponents();
+            return (id, currentValue, startValue, endValue, duration, startTime, IsCompleted, delay, easeType);
         }
 
-        public void RetrieveFromJob((T currentValue, T startValue, T endValue, float duration, float startTime, bool isCompleted, float delay) tweenJobComponent)
+        public void RetrieveFromJob((int id, T currentValue, T startValue, T endValue, float duration, float startTime, bool isCompleted, float delay, EaseType easeType) tweenJobComponent)
         {
-            klazTweenBaseComponent.SetKlazTweenBaseComponents((tweenJobComponent.currentValue, tweenJobComponent.startValue, tweenJobComponent.endValue, tweenJobComponent.duration, tweenJobComponent.startTime, tweenJobComponent.delay));
+            klazTweenBaseComponent.SetKlazTweenBaseComponents((tweenJobComponent.id, tweenJobComponent.currentValue, tweenJobComponent.startValue, tweenJobComponent.endValue, tweenJobComponent.duration, tweenJobComponent.startTime, tweenJobComponent.delay, tweenJobComponent.easeType));
 
             if (tweenJobComponent.isCompleted)
             {

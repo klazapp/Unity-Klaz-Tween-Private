@@ -2,8 +2,6 @@ namespace com.Klazapp.Utility
 {
     public interface IKlazTween
     {
-        int Id { get; set; }
-        
         void OnUpdate();
         void ApplyRegularUpdate();
         void ApplyJobUpdate();

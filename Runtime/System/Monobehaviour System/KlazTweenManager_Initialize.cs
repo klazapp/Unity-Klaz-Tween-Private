@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -28,8 +29,6 @@ namespace com.Klazapp.Utility
                     (Delegate)(Func<quaternion, quaternion, float, quaternion>)KlazTweenLerp.Slerp,
                 "UnityEngine.Color32" => (Func<T, T, float, T>)
                     (Delegate)(Func<Color32, Color32, float, Color32>)KlazTweenLerp.Lerp,
-                "UnityEngine.Color" => (Func<T, T, float, T>)(Delegate)(Func<Color, Color, float, Color>)KlazTweenLerp
-                    .Lerp,
                 _ => throw new InvalidOperationException($"No lerp function available for type {typeFullName}"),
             };
         }
@@ -44,22 +43,19 @@ namespace com.Klazapp.Utility
                     floatTweens.Add(tweenId, tween);
                     break;
                 case KlazTween<float2>:
-                    float3Tweens.Add(tweenId, tween);
+                    float2Tweens.Add(tweenId, tween);
                     break;
                 case KlazTween<float3>:
                     float3Tweens.Add(tweenId, tween);
                     break;
                 case KlazTween<float4>:
-                    float3Tweens.Add(tweenId, tween);
+                    float4Tweens.Add(tweenId, tween);
                     break;
                 case KlazTween<quaternion>:
-                    float3Tweens.Add(tweenId, tween);
-                    break;
-                case KlazTween<Color>:
-                    float3Tweens.Add(tweenId, tween);
+                    quaternionTweens.Add(tweenId, tween);
                     break;
                 case KlazTween<Color32>:
-                    float3Tweens.Add(tweenId, tween);
+                    color32Tweens.Add(tweenId, tween);
                     break;
             }
         }
@@ -68,29 +64,26 @@ namespace com.Klazapp.Utility
         private void InitializeNativeArrays()
         {
             //Initialize arrays for float tweens
-            InitializeNativeArrays(floatTweens.Values, floatNativeArrays);
+            InitializeNativeArrays(floatTweens, floatNativeArrays);
 
             //Initialize arrays for float2 tweens
-            InitializeNativeArrays(float2Tweens.Values, float3NativeArrays);
+            InitializeNativeArrays(float2Tweens, float2NativeArrays);
             
             //Initialize arrays for float3 tweens
-            InitializeNativeArrays(float3Tweens.Values, float3NativeArrays);
+            InitializeNativeArrays(float3Tweens, float3NativeArrays);
             
             //Initialize arrays for float4 tweens
-            InitializeNativeArrays(float4Tweens.Values, float3NativeArrays);
+            InitializeNativeArrays(float4Tweens, float4NativeArrays);
             
             //Initialize arrays for quaternion tweens
-            InitializeNativeArrays(quaternionTweens.Values, float3NativeArrays);
-            
-            //Initialize arrays for color tweens
-            InitializeNativeArrays(colorTweens.Values, float3NativeArrays);
+            InitializeNativeArrays(quaternionTweens, quaternionNativeArrays);
             
             //Initialize arrays for color32 tweens
-            InitializeNativeArrays(color32Tweens.Values, float3NativeArrays);
+            InitializeNativeArrays(color32Tweens, color32NativeArrays);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void InitializeNativeArrays<T>(IReadOnlyCollection<IKlazTween> tweens, KlazTweenNativeArrays<T> nativeArrays) where T : struct
+        private static void InitializeNativeArrays<T>(ICollection tweens, KlazTweenNativeArrays<T> nativeArrays) where T : struct
         {
             if (tweens.Count <= 0)
                 return;
@@ -98,44 +91,59 @@ namespace com.Klazapp.Utility
             nativeArrays.InitializeNativeArrays(tweens.Count);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void PrepareTweenForJob()
         {
             //Prepare for job for float tweens
-            PrepareTweenForJob(floatTweens.Values, floatNativeArrays);
+            PrepareTweenForJob(floatTweens, floatNativeArrays);
 
             //Prepare for job for float2 tweens
-            PrepareTweenForJob(float2Tweens.Values, float3NativeArrays);
+            PrepareTweenForJob(float2Tweens, float2NativeArrays);
             
             //Prepare for job for float3 tweens
-            PrepareTweenForJob(float3Tweens.Values, float3NativeArrays);
+            PrepareTweenForJob(float3Tweens, float3NativeArrays);
             
             //Prepare for job for float4 tweens
-            PrepareTweenForJob(float4Tweens.Values, float3NativeArrays);
+            PrepareTweenForJob(float4Tweens, float4NativeArrays);
             
             //Prepare for job for quaternion tweens
-            PrepareTweenForJob(quaternionTweens.Values, float3NativeArrays);
-            
-            //Prepare for job for color tweens
-            PrepareTweenForJob(colorTweens.Values, float3NativeArrays);
+            PrepareTweenForJob(quaternionTweens, quaternionNativeArrays);
             
             //Prepare for job for color32 tweens
-            PrepareTweenForJob(color32Tweens.Values, float3NativeArrays);
+            PrepareTweenForJob(color32Tweens, color32NativeArrays);
         }
 
+        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // private static void PrepareTweenForJob<T>(List<IKlazTween> tweens, KlazTweenNativeArrays<T> nativeArrays) where T : struct
+        // {
+        //     if (tweens.Count <= 0)
+        //         return;
+        //
+        //     for (var i = 0; i < tweens.Count; i++)
+        //     {
+        //         if (tweens[i] is not KlazTween<T> tween)
+        //             continue;
+        //
+        //         var tweenComponentForJob = tween.PrepareForJob();
+        //         nativeArrays.SetComponentForJobByIndex(tweenComponentForJob, i);
+        //     }
+        // }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void PrepareTweenForJob<T>(List<IKlazTween> tweens, KlazTweenNativeArrays<T> nativeArrays) where T : struct
+        private static void PrepareTweenForJob<T>(Dictionary<int, IKlazTween> tweens, KlazTweenNativeArrays<T> nativeArrays) where T : struct
         {
             if (tweens.Count <= 0)
                 return;
-
-            for (var i = 0; i < tweens.Count; i++)
+            
+            var index = 0;
+            foreach (var ikTween in tweens.Values)
             {
-                if (tweens[i] is not KlazTween<T> tween)
+                if (ikTween is not KlazTween<T> tween) 
                     continue;
-
+                
                 var tweenComponentForJob = tween.PrepareForJob();
-                nativeArrays.SetComponentForJobByIndex(tweenComponentForJob, i);
+                nativeArrays.SetComponentForJobByIndex(tweenComponentForJob, index);
+
+                index++;
             }
         }
         #endregion

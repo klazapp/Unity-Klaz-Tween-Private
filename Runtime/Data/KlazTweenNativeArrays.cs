@@ -1,4 +1,5 @@
 using Unity.Collections;
+using Unity.Mathematics;
 
 namespace com.Klazapp.Utility
 {
@@ -12,8 +13,14 @@ namespace com.Klazapp.Utility
           public NativeArray<float> startTime;
           public NativeArray<bool> isCompleted;
           
+          //Ease Type
+          public NativeArray<EaseType> easeTypes;
+          
           //Delays
           public NativeArray<float> delays;
+          
+          //Id
+          public NativeArray<int> ids;
           #endregion
 
           #region Public Access
@@ -25,7 +32,27 @@ namespace com.Klazapp.Utility
                duration = new NativeArray<float>(length, Allocator.Persistent);
                startTime = new NativeArray<float>(length, Allocator.Persistent);
                isCompleted = new NativeArray<bool>(length, Allocator.Persistent);
+               easeTypes = new NativeArray<EaseType>(length, Allocator.Persistent);
                delays = new NativeArray<float>(length, Allocator.Persistent);
+               ids = new NativeArray<int>(length, Allocator.Persistent);
+          }
+          
+          public static NativeArray<T> ResizeNativeArray<T>(NativeArray<T> original, int newSize, Allocator allocator) where T : struct
+          {
+               var resizedArray = new NativeArray<T>(newSize, allocator);
+
+               //Copy data from the original array to the new array
+               var elementsToCopy = math.min(original.Length, newSize);
+               
+               NativeArray<T>.Copy(original, resizedArray, elementsToCopy);
+
+               //Dispose the original array if necessary
+               if (original.IsCreated)
+               {
+                    original.Dispose();
+               }
+
+               return resizedArray;
           }
 
           public void DisposeNativeArrays()
@@ -42,11 +69,15 @@ namespace com.Klazapp.Utility
                     startTime.Dispose();
                if (isCompleted.IsCreated)
                     isCompleted.Dispose();
+               if (easeTypes.IsCreated)
+                    easeTypes.Dispose();
                if (delays.IsCreated)
                     delays.Dispose();
+               if (ids.IsCreated)
+                    ids.Dispose();
           }
 
-          public void SetComponentForJobByIndex((T currentValue, T startValue, T endValue, float duration, float startTime, bool isCompleted, float delay) nativeArrayComponent, int index)
+          public void SetComponentForJobByIndex((int id, T currentValue, T startValue, T endValue, float duration, float startTime, bool isCompleted, float delay, EaseType easeType) nativeArrayComponent, int index)
           {
                currentValues[index] = nativeArrayComponent.currentValue;
                startValues[index] = nativeArrayComponent.startValue;
@@ -56,7 +87,10 @@ namespace com.Klazapp.Utility
                startTime[index] = nativeArrayComponent.startTime;
                isCompleted[index] = nativeArrayComponent.isCompleted;
 
+               easeTypes[index] = nativeArrayComponent.easeType;
                delays[index] = nativeArrayComponent.delay;
+
+               ids[index] = nativeArrayComponent.id;
           }
           #endregion
      }

@@ -12,6 +12,8 @@ namespace com.Klazapp.Utility
 #endif
     public struct KlazTweenQuaternionJobSystem : IJobParallelFor
     {
+        [ReadOnly] 
+        public NativeArray<int> ids;
         [WriteOnly]
         public NativeArray<quaternion> currentValues;
         [ReadOnly] 
@@ -25,6 +27,9 @@ namespace com.Klazapp.Utility
         public NativeArray<float> startTimes;
         
         public NativeArray<bool> isCompleted;
+
+        [ReadOnly]
+        public NativeArray<EaseType> easeTypes;
 
         [ReadOnly] 
         public NativeArray<float> delays;
@@ -43,11 +48,16 @@ namespace com.Klazapp.Utility
             if (elapsedTime < delays[index])
                 return;
 
-            var progress = math.clamp((elapsedTime - delays[index]) / durations[index], 0f, 1f);
+            var normalizedTime = math.clamp((elapsedTime - delays[index]) / durations[index], 0f, 1f);
 
-            isCompleted[index] = progress >= 1f;
+            // Apply easing based on the easeType for this tween
+            // Retrieve the ease type and apply easing function
+            var easedProgress = Easing.SetEasingByEaseType(easeTypes[index], normalizedTime);
 
-            currentValues[index] = math.slerp(startValues[index], endValues[index], progress);
+            isCompleted[index] = easedProgress >= 1f;
+
+            //Use easedProgress instead of normalizedTime for the interpolation
+            currentValues[index] = math.slerp(startValues[index], endValues[index], easedProgress);
         }
     }
 }

@@ -6,6 +6,12 @@ using Unity.Mathematics;
 
 namespace com.Klazapp.Utility
 {
+    //[Todoheader("Major file clean up")]
+    //[Todoheader("Completed tweens are not removed. need to account for native arrays as well.")]
+    //[Todoheader("When tween limit is exceeded, should increase tween limit without causing issues.")]
+    //[Todoheader("When not on job system, if tween has delay, its start value is not set till delay is completed.")]
+    //[Todoheader("Klaz tween native arrays should be renamed to nativearrayholder or nativearraycomponent")]
+    //[Todoheader("Immediately spawn 100 of each native arrays. increase limit if need to afterwards")]
     //[Todoheader("Should only have 1 version of Color, auto convert to Color32. do same for other variables. eg. Vector4 -> float4")]
     //[TodoHeader("Add other functionalities as required")]
     //[TodoHeader("Check performance on event and action callbacks")]
@@ -24,7 +30,6 @@ namespace com.Klazapp.Utility
         private Dictionary<int, IKlazTween> float3Tweens = new Dictionary<int, IKlazTween>();
         private Dictionary<int, IKlazTween> float4Tweens = new Dictionary<int, IKlazTween>();
         private Dictionary<int, IKlazTween> quaternionTweens = new Dictionary<int, IKlazTween>();
-        private Dictionary<int, IKlazTween> colorTweens = new Dictionary<int, IKlazTween>();
         private Dictionary<int, IKlazTween> color32Tweens = new Dictionary<int, IKlazTween>();
         // private List<IKlazTween> floatTweens = new List<IKlazTween>();
         // private List<IKlazTween> float2Tweens = new List<IKlazTween>();
@@ -40,7 +45,6 @@ namespace com.Klazapp.Utility
         private KlazTweenNativeArrays<float3> float3NativeArrays = new KlazTweenNativeArrays<float3>();
         private KlazTweenNativeArrays<float4> float4NativeArrays = new KlazTweenNativeArrays<float4>();
         private KlazTweenNativeArrays<quaternion> quaternionNativeArrays = new KlazTweenNativeArrays<quaternion>();
-        private KlazTweenNativeArrays<Color> colorNativeArrays = new KlazTweenNativeArrays<Color>();
         private KlazTweenNativeArrays<Color32> color32NativeArrays = new KlazTweenNativeArrays<Color32>();
 
         public bool useJobSystem;
@@ -83,14 +87,16 @@ namespace com.Klazapp.Utility
         #endregion
 
         #region Public Access
-        public void DoTween<T>(T startValue, T endValue, float duration, Action<T> onUpdate, float delay = 0f, KlazTweenCallback startTweenCallback = null, KlazTweenCallback endTweenCallback = null) where T : struct
+        public void DoTween<T>(T startValue, T endValue, float duration, Action<T> onUpdate, float delay = 0f, EaseType easeType = EaseType.Linear, KlazTweenCallback startTweenCallback = null, KlazTweenCallback endTweenCallback = null) where T : struct
         {
+            tweenId++;
+            
             //Get lerp func
             var lerpFunc = GetLerpFuncByType<T>();
 
             //Create new tween
-            var tween = new KlazTween<T>(startValue, endValue, duration, onUpdate, lerpFunc, delay, startTweenCallback, endTweenCallback, tweenId++);
-            
+            var tween = new KlazTween<T>(tweenId, startValue, endValue, duration, onUpdate, lerpFunc, delay, easeType, startTweenCallback, endTweenCallback);
+
             //Add to list
             AddTween(tween);
 
