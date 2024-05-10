@@ -1,6 +1,6 @@
 {
   "name": "com.klazapp.klaztween",
-  "displayName": "Unity Klaz Tween",
+  "displayName": "Unity Klaz Tween Private",
   "version": "1.0.0",
   "unity": "2022.3",
   "description": "KlazTween is a high-performance Unity tweening library that facilitates smooth animations across various data types, leveraging Unity's Job System and Burst Compiler for optimal efficiency.",
