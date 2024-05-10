@@ -17,6 +17,11 @@ KlazTween requires:
 - **Unity Collections Library** for managing data efficiently.
 - **Unity Jobs System** for performance (optional but recommended for heavy use cases).
 
+## Compatibility
+| Compatibility | URP | BRP | HDRP |
+|---------------|-----|-----|------|
+| Compatible    | ✔️   | ✔️   | ✔️    |
+
 ## Installation
 To install KlazTween in your Unity project:
 1. Download the latest version of KlazTween from the [GitHub repository](https://github.com/klazapp/klaz-tween).
