@@ -10,16 +10,16 @@ namespace com.Klazapp.Utility
 // #if KLAZAPP_ENABLE_JOBSYSTEM
 //     [BurstCompile]
 // #endif
-    public struct KlazTweenFloat4JobSystem : IJobParallelFor
+    public struct KlazTweenDouble2JobSystem : IJobParallelFor
     {
         [ReadOnly] 
         public NativeArray<int> ids;
         [WriteOnly]
-        public NativeArray<float4> currentValues;
+        public NativeArray<double2> currentValues;
         [ReadOnly] 
-        public NativeArray<float4> startValues;
+        public NativeArray<double2> startValues;
         [ReadOnly]
-        public NativeArray<float4> endValues;
+        public NativeArray<double2> endValues;
 
         [ReadOnly] 
         public NativeArray<float> durations;
@@ -27,7 +27,7 @@ namespace com.Klazapp.Utility
         public NativeArray<float> startTimes;
         
         public NativeArray<bool> isCompleted;
-
+        
         [ReadOnly]
         public NativeArray<EaseType> easeTypes;
         
@@ -43,7 +43,7 @@ namespace com.Klazapp.Utility
                 return;
 
             var elapsedTime = currentTime - startTimes[index];
-        
+            
             //Delay not yet elapsed
             if (elapsedTime < delays[index])
                 return;

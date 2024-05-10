@@ -22,7 +22,7 @@ namespace com.Klazapp.Utility
     //[TodoHeader("Use Singleton for manager")]
     //[TodoHeader("Create high performance generic job system")]
     //[ScriptHeader("High performance tween manager that utilizes multi-threading and machine code compilation when necessary")]
-    public partial class KlazTweenManager : MonoBehaviour
+    public partial class KlazTweenManager : MonoSingletonGlobal<KlazTweenManager>
     {
         //Tweens
         private Dictionary<int, IKlazTween> floatTweens = new Dictionary<int, IKlazTween>();
@@ -31,6 +31,8 @@ namespace com.Klazapp.Utility
         private Dictionary<int, IKlazTween> float4Tweens = new Dictionary<int, IKlazTween>();
         private Dictionary<int, IKlazTween> quaternionTweens = new Dictionary<int, IKlazTween>();
         private Dictionary<int, IKlazTween> color32Tweens = new Dictionary<int, IKlazTween>();
+        private Dictionary<int, IKlazTween> double2Tweens = new Dictionary<int, IKlazTween>();
+
         // private List<IKlazTween> floatTweens = new List<IKlazTween>();
         // private List<IKlazTween> float2Tweens = new List<IKlazTween>();
         // private List<IKlazTween> float3Tweens = new List<IKlazTween>();
@@ -46,6 +48,7 @@ namespace com.Klazapp.Utility
         private KlazTweenNativeArrays<float4> float4NativeArrays = new KlazTweenNativeArrays<float4>();
         private KlazTweenNativeArrays<quaternion> quaternionNativeArrays = new KlazTweenNativeArrays<quaternion>();
         private KlazTweenNativeArrays<Color32> color32NativeArrays = new KlazTweenNativeArrays<Color32>();
+        private KlazTweenNativeArrays<double2> double2NativeArrays = new KlazTweenNativeArrays<double2>();
 
         public bool useJobSystem;
         private int tweenId = 0;
@@ -55,9 +58,9 @@ namespace com.Klazapp.Utility
         {
             tweenId = 0;
 
-#if KLAZAPP_ENABLE_JOBSYSTEM
+// #if KLAZAPP_ENABLE_JOBSYSTEM
 
-#endif
+// #endif
         }
         
         private void OnDestroy()
@@ -67,20 +70,21 @@ namespace com.Klazapp.Utility
         
         private void Update()
         {
-#if KLAZAPP_ENABLE_JOBSYSTEM
-            var totalTweenCount = GetTotalTweenCount();
-            //if(totalTweenCount >= 10)
-            if (useJobSystem)
-            {
-                UpdateJobTweens();
-            }
-            else
-            {
-                UpdateRegularTweens();
-            }
-#else
+// #if KLAZAPP_ENABLE_JOBSYSTEM
+//             var totalTweenCount = GetTotalTweenCount();
+//             //if(totalTweenCount >= 10)
+//             if (useJobSystem)
+//             {
+//                 UpdateJobTweens();
+//             }
+//             else
+//             {
+//                 UpdateRegularTweens();
+//             }
+// #else
+//             UpdateRegularTweens();
+// #endif
             UpdateRegularTweens();
-#endif
 
             ProcessCompletedTweens();
         }

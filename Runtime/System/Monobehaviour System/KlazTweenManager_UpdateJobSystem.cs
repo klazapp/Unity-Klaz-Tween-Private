@@ -250,5 +250,45 @@ namespace com.Klazapp.Utility
             }
         }
         #endregion
+        
+        private void UpdateDouble2TweensWithJobSystem()
+        {
+            //Create and schedule job
+            var tweenJob = new KlazTweenDouble2JobSystem
+            {
+                ids = double2NativeArrays.ids,
+                currentValues = double2NativeArrays.currentValues,
+                startValues = double2NativeArrays.startValues,
+                endValues = double2NativeArrays.endValues,
+                durations = double2NativeArrays.duration,
+                startTimes = double2NativeArrays.startTime,
+                isCompleted = double2NativeArrays.isCompleted,
+                currentTime = Time.time,
+                delays = double2NativeArrays.delays,
+                easeTypes = double2NativeArrays.easeTypes,
+            };
+
+            //Schedule and complete job
+            var jobHandle = tweenJob.Schedule(double2Tweens.Count, 64);
+            jobHandle.Complete();
+
+            foreach (var (id, tween) in double2Tweens)
+            {
+                if (tween is not KlazTween<double2> klazTween)
+                    continue;
+                
+                var tweenJobIds = tweenJob.ids;
+
+                for (var i = 0; i < tweenJobIds.Length; i++)
+                {
+                    if (tweenJobIds[i] != id)
+                        continue;
+                    
+                    var jobComponentData = (tweenJob.ids[i], tweenJob.currentValues[i], tweenJob.startValues[i], tweenJob.endValues[i], tweenJob.durations[i], tweenJob.startTimes[i], tweenJob.isCompleted[i], tweenJob.delays[i], tweenJob.easeTypes[i]);
+                    klazTween.RetrieveFromJob(jobComponentData);
+                    break;
+                }
+            }
+        }
     }
 }

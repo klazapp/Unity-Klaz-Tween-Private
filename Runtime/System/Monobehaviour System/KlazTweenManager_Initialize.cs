@@ -7,7 +7,7 @@ using Unity.Mathematics;
 
 namespace com.Klazapp.Utility
 {
-    public partial class KlazTweenManager : MonoBehaviour
+    public partial class KlazTweenManager : MonoSingletonGlobal<KlazTweenManager>
     {
         #region Modules
         //Gets lerp function by type T
@@ -25,6 +25,8 @@ namespace com.Klazapp.Utility
                     (Delegate)(Func<float3, float3, float, float3>)KlazTweenLerp.Lerp,
                 "Unity.Mathematics.float4" => (Func<T, T, float, T>)
                     (Delegate)(Func<float4, float4, float, float4>)KlazTweenLerp.Lerp,
+                "Unity.Mathematics.double2" => (Func<T, T, float, T>)
+                    (Delegate)(Func<double2, double2, float, double2>)KlazTweenLerp.Lerp,
                 "Unity.Mathematics.quaternion" => (Func<T, T, float, T>)
                     (Delegate)(Func<quaternion, quaternion, float, quaternion>)KlazTweenLerp.Slerp,
                 "UnityEngine.Color32" => (Func<T, T, float, T>)
@@ -57,6 +59,9 @@ namespace com.Klazapp.Utility
                 case KlazTween<Color32>:
                     color32Tweens.Add(tweenId, tween);
                     break;
+                case KlazTween<double2>:
+                    double2Tweens.Add(tweenId, tween);
+                    break;
             }
         }
 
@@ -80,6 +85,9 @@ namespace com.Klazapp.Utility
             
             //Initialize arrays for color32 tweens
             InitializeNativeArrays(color32Tweens, color32NativeArrays);
+            
+            //Initialize arrays for double2 tweens
+            InitializeNativeArrays(double2Tweens, double2NativeArrays);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -111,6 +119,9 @@ namespace com.Klazapp.Utility
             
             //Prepare for job for color32 tweens
             PrepareTweenForJob(color32Tweens, color32NativeArrays);
+            
+            //Prepare for job for double2 tweens
+            PrepareTweenForJob(double2Tweens, double2NativeArrays);
         }
 
         // [MethodImpl(MethodImplOptions.AggressiveInlining)]

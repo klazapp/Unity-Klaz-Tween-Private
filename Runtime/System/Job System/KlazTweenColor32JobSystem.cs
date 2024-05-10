@@ -1,6 +1,6 @@
-#if KLAZAPP_ENABLE_JOBSYSTEM
-using Unity.Burst;
-#endif
+// #if KLAZAPP_ENABLE_JOBSYSTEM
+// using Unity.Burst;
+// #endif
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
@@ -8,9 +8,9 @@ using UnityEngine;
 
 namespace com.Klazapp.Utility
 {
-#if KLAZAPP_ENABLE_JOBSYSTEM
-    [BurstCompile]
-#endif
+// #if KLAZAPP_ENABLE_JOBSYSTEM
+//     [BurstCompile]
+// #endif
     public struct KlazTweenColor32JobSystem : IJobParallelFor
     {
         [ReadOnly] 

@@ -1,0 +1,19 @@
+{
+    "name": "com.klazapp.klaztween.runtime",
+    "rootNamespace": "",
+    "references": [
+        "com.klazapp.easing.runtime",
+        "com.klazapp.singleton.runtime",
+        "com.klazapp.mathematicsextension.runtime",
+        "Unity.Mathematics"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

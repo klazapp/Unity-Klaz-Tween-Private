@@ -20,6 +20,7 @@ namespace com.Klazapp.Utility
             UpdateRegularTweens(float4Tweens);
             UpdateRegularTweens(quaternionTweens);
             UpdateRegularTweens(color32Tweens);
+            UpdateRegularTweens(double2Tweens);
         }
 
         //[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -33,13 +34,15 @@ namespace com.Klazapp.Utility
             UpdateFloat4TweensWithJobSystem();
             UpdateQuaternionTweensWithJobSystem();
             UpdateColor32TweensWithJobSystem();
-            
+            UpdateDouble2TweensWithJobSystem();
+
             ApplyJobTweenUpdates(floatTweens);
             ApplyJobTweenUpdates(float2Tweens);
             ApplyJobTweenUpdates(float3Tweens);
             ApplyJobTweenUpdates(float4Tweens);
             ApplyJobTweenUpdates(quaternionTweens);
             ApplyJobTweenUpdates(color32Tweens);
+            ApplyJobTweenUpdates(double2Tweens);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -51,6 +54,7 @@ namespace com.Klazapp.Utility
             ProcessCompletedTweens(float4Tweens);
             ProcessCompletedTweens(quaternionTweens);
             ProcessCompletedTweens(color32Tweens);
+            ProcessCompletedTweens(double2Tweens);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

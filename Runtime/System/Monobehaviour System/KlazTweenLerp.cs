@@ -17,6 +17,9 @@ namespace com.Klazapp.Utility
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static float4 Lerp(float4 start, float4 end, float progress) => math.lerp(start, end, progress);
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static double2 Lerp(double2 start, double2 end, float progress) => math.lerp(start, end, progress);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static quaternion Slerp(quaternion start, quaternion end, float progress) =>
