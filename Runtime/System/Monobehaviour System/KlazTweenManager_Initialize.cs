@@ -7,7 +7,7 @@ using Unity.Mathematics;
 
 namespace com.Klazapp.Utility
 {
-    public partial class KlazTweenManager : MonoSingletonGlobal<KlazTweenManager>
+    public partial class KlazTweenManager
     {
         #region Modules
         //Gets lerp function by type T

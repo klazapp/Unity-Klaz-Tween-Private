@@ -22,8 +22,15 @@ namespace com.Klazapp.Utility
     //[TodoHeader("Use Singleton for manager")]
     //[TodoHeader("Create high performance generic job system")]
     //[ScriptHeader("High performance tween manager that utilizes multi-threading and machine code compilation when necessary")]
-    public partial class KlazTweenManager : MonoSingletonGlobal<KlazTweenManager>
+    public partial class KlazTweenManager : MonoBehaviour
     {
+        #region Variables
+        [SerializeField]
+        [Tooltip("Toggle this to set script's singleton status. Status will be set on script's OnAwake function")]
+        private ScriptBehavior scriptBehavior = ScriptBehavior.None;
+        
+        public static KlazTweenManager Instance { get; private set; }
+        
         //Tweens
         private Dictionary<int, IKlazTween> floatTweens = new Dictionary<int, IKlazTween>();
         private Dictionary<int, IKlazTween> float2Tweens = new Dictionary<int, IKlazTween>();
@@ -52,8 +59,14 @@ namespace com.Klazapp.Utility
 
         public bool useJobSystem;
         private int tweenId = 0;
+        #endregion
 
         #region Lifecycle Flow
+        private void Awake()
+        {
+            SetScriptBehaviour(scriptBehavior);
+        }
+        
         private void PostAwake()
         {
             tweenId = 0;
@@ -113,6 +126,26 @@ namespace com.Klazapp.Utility
         #endregion
 
         #region Modules
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetScriptBehaviour(ScriptBehavior behavior)
+        {
+            if (behavior is not (ScriptBehavior.Singleton or ScriptBehavior.PersistentSingleton)) 
+                return;
+            
+            if (Instance != null && Instance != this)
+            {
+                Destroy(this.gameObject);
+                return;
+            }
+                
+            Instance = this;
+
+            if (behavior == ScriptBehavior.PersistentSingleton)
+            {
+                DontDestroyOnLoad(this.gameObject);
+            }
+        }
+        
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int GetTotalTweenCount()
         {
