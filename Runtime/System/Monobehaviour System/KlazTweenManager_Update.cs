@@ -60,16 +60,25 @@ namespace com.Klazapp.Utility
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void UpdateRegularTweens(Dictionary<int, IKlazTween> tweens)
         {
-            if (tweens.Count <= 0)
+             if (tweens.Count <= 0)
                 return;
+
+            // Create a temporary list of tweens to safely iterate over
+            var tweenList = new List<IKlazTween>(tweens.Values);
             
-            for (var i = 0; i < tweens.Values.Count; i++)
+            // Iterate through the copied list instead of the original dictionary
+            foreach (var ikTween in tweenList)
             {
-                foreach (var ikTween in tweens.Values)
-                {
-                    ikTween.OnUpdate();
-                }
+                ikTween.OnUpdate();
             }
+            
+            // for (var i = 0; i < tweens.Values.Count; i++)
+            // {
+            //     foreach (var ikTween in tweens.Values)
+            //     {
+            //         ikTween.OnUpdate();
+            //     }
+            // }
         }
         #endregion
 
